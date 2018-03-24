@@ -1,0 +1,87 @@
+    <!doctype html>
+
+    <html lang="en">
+    <head>
+    <meta charset="utf-8">
+        <title>Giphy API</title>
+        <link rel="stylesheet" href="style.css">
+        x<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <div class="buttons"> 
+                    <input id="searchbox" type="text" name="search_box" placeholder="search Giphy">
+                    <input id="add-image" type="submit" value="Submit Request">
+        </div>
+
+        <div class="giphy_buttons">
+            <!-- Include all buttons here -->
+        </div>
+        <div class="instructions">choose a gif or search to add the gif</div>
+        <div class="gif_placement"></div>
+
+        <script type="text/javascript">
+
+
+                var images = ["lion"];
+
+                function renderButtons() {
+                $(".giphy_buttons").empty();
+                for (var i = 0; i < images.length; i++) {
+                    var a = $("<button>");
+                    a.addClass("image-btn btn btn-info");
+                    a.attr("data-name", images[i]);
+                    a.text(images[i]);
+                    $(".gif_placement").append(a);
+                    $("</button>");
+                };
+            }
+
+                $("#add-image").on("click", function(event) {
+                event.preventDefault();
+                var animal = $("#searchbox").val();
+                $("#searchbox").empty().val('');
+                images.push(animal);
+                $("#searchbox").val('');
+                renderButtons();
+            });
+            renderButtons();
+                // function addButton () {
+                //     $(".giphy_buttons").empty();
+                //     for (var i = 0; i < )
+                // }
+
+            function displayImages() {
+                var images = $(this).attr("data-name");
+                var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + images + "&api_key=yGpwzYFLLLAHFhcojhtTZ5vcSmMptHsL&limit=10";
+                // var APIkey = "yGpwzYFLLLAHFhcojhtTZ5vcSmMptHsL";
+                
+                $.ajax({
+                    url: queryURL,
+                    method: "GET"
+                }).then(function(response) {
+                    var result = response.data;
+                    var imageDiv = $("<div class='image'>");
+                    var rating = response.Rated;
+
+                    for (var i = 0; i < result.length; i++) {
+                        var p0ne = $("<p>").text("Rating: " + result[i].rating);
+                        imageDiv.append(p0ne);
+                        var imageURL = response.Poster;
+                        var image = $("<img>");
+                        image.attr ('src', result[i].images.fixed_height.url);
+                        imageDiv.append(image);
+                        $(".gif_placement").prepend(imageDiv);
+                    }
+                });
+            }
+                
+            
+
+            $(document).on("click", ".image-btn", displayImages);
+
+            
+        </script>
+    </body>
+    </html>
